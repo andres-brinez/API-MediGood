@@ -1,6 +1,7 @@
 package com.farmacia.mediGood.models.entities;
 
 import com.farmacia.mediGood.models.enums.Rol;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,4 +37,12 @@ public class User {
         this.password = password;
         this.rol = Rol.User;
     }
+
+    public void passwordEncoder() {
+        this.password = new BCryptPasswordEncoder().encode(this.password);
+    }
+
+
 }
+
+

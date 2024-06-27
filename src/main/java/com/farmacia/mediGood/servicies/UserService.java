@@ -20,6 +20,8 @@ public class UserService {
     public User registerUser(UserRegisterDTO user){
 
         User newUser = new User(user.getName(),user.getEmail(),user.getPassword());
+        newUser.passwordEncoder();
+
         Optional<User> optionalUsuario = userRepository.findById(newUser.getEmail());
 
         if (optionalUsuario.isPresent()) {
