@@ -1,7 +1,9 @@
 package com.farmacia.mediGood.controllers;
 
 import com.farmacia.mediGood.models.DTOS.UserRegisterDTO;
+import com.farmacia.mediGood.models.entities.User;
 import com.farmacia.mediGood.servicies.UserService;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserRegisterDTO payload, BindingResult bindingResult) {
+
+        // Validación del objeto recibido
         if(bindingResult.hasErrors()){
             List<String> errors = new ArrayList<>();
             for(FieldError error : bindingResult.getFieldErrors()){
@@ -34,8 +38,13 @@ public class UserController {
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         }
-        userService.saveUser(payload);
-        return ResponseEntity.ok("Usuario "+ payload.getName() + " creado");
+
+        User userRegister = userService.registerUser(payload);
+        if (userRegister == null) {
+            return ResponseEntity.badRequest().body("El correo electrónico ya existe.");
+        }
+        return ResponseEntity.ok(userRegister);
+
 
     }
 }
