@@ -6,7 +6,6 @@ import com.farmacia.mediGood.models.entities.User;
 import com.farmacia.mediGood.repositories.AuthRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
@@ -17,13 +16,13 @@ public class AuthService {
     private  final AuthRepository authRepository;
     private final JwtService jwtService;
 
-    private final AuthenticationManager authenticationManager; // Se encarga de la autenticacion
+    //private final AuthenticationManager authenticationManager; // Se encarga de la autenticacion
 
     public AuthService(AuthRepository authRepository, JwtService jwtService, AuthenticationManager authenticationManager) {
 
         this.authRepository = authRepository;
         this.jwtService = jwtService;
-        this.authenticationManager = authenticationManager;
+        //this.authenticationManager = authenticationManager;
     }
 
     public User registerUser(UserRegisterDTO user){
