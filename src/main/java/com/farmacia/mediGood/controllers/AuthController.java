@@ -1,51 +1,37 @@
 package com.farmacia.mediGood.controllers;
 
-import com.farmacia.mediGood.models.DTOS.UserLoginDTO;
-import com.farmacia.mediGood.models.DTOS.UserRegisterDTO;
+import com.farmacia.mediGood.models.DTOS.input.autentication.UserLoginDTO;
+import com.farmacia.mediGood.models.DTOS.input.autentication.UserRegisterDTO;
 import com.farmacia.mediGood.models.DTOS.output.UserToken;
 import com.farmacia.mediGood.models.entities.User;
-import com.farmacia.mediGood.servicies.UserService;
-import jakarta.validation.ConstraintViolationException;
+import com.farmacia.mediGood.services.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@RestController
-public class UserController {
+@RestController()
+@RequestMapping("/api/v1/auth") // Corrección aquí
 
-    private  final UserService userService;
+public class AuthController {
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    private  final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserRegisterDTO payload, BindingResult bindingResult) {
-
-
-
-        User userRegister = userService.registerUser(payload);
-        if (userRegister == null) {
-            return ResponseEntity.badRequest().body("El correo electrónico ya existe.");
-        }
-        return ResponseEntity.ok(userRegister);
-
-
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDTO payload, BindingResult bindingResult) {
 
         // Validación del objeto recibido
         if(bindingResult.hasErrors()){
@@ -56,13 +42,32 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         }
 
+        User userRegister = authService.registerUser(payload);
+        if (userRegister == null) {
+            return ResponseEntity.badRequest().body("El correo electrónico ya existe.");
+        }
+        return ResponseEntity.ok(userRegister);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDTO payload, BindingResult bindingResult) {
+        // Validación del objeto recibido
+        if(bindingResult.hasErrors()){
+            List<String> errors = new ArrayList<>();
+            for(FieldError error : bindingResult.getFieldErrors()){
+                errors.add(error.getDefaultMessage());
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        }
+
         try{
-            String token = userService.login(payload);
+            String token = authService.login(payload);
             UserToken userToken = new UserToken(token);
             return ResponseEntity.ok(userToken);
         }
-        catch (BadCredentialsException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
+        catch (UsernameNotFoundException e){
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Credenciales incorrectas");
         }
 
     }
