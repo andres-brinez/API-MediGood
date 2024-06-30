@@ -8,6 +8,7 @@ import com.farmacia.mediGood.services.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -34,12 +35,10 @@ public class AuthController {
     public ResponseEntity<?> register(@Valid @RequestBody UserRegisterDTO payload, BindingResult bindingResult) {
 
         // Validación del objeto recibido
-        if(bindingResult.hasErrors()){
-            List<String> errors = new ArrayList<>();
-            for(FieldError error : bindingResult.getFieldErrors()){
-                errors.add(error.getDefaultMessage());
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        ResponseEntity<?> responseValidation = validateInformation(bindingResult);
+
+        if (responseValidation != null) {
+            return responseValidation;
         }
 
         User userRegister = authService.registerUser(payload);
@@ -51,13 +50,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserLoginDTO payload, BindingResult bindingResult) {
+
         // Validación del objeto recibido
-        if(bindingResult.hasErrors()){
-            List<String> errors = new ArrayList<>();
-            for(FieldError error : bindingResult.getFieldErrors()){
-                errors.add(error.getDefaultMessage());
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        ResponseEntity<?> responseValidation = validateInformation(bindingResult);
+
+        if (responseValidation != null) {
+            return responseValidation;
         }
 
         try{
@@ -65,14 +63,13 @@ public class AuthController {
             UserToken userToken = new UserToken(token);
             return ResponseEntity.ok(userToken);
         }
-        catch (UsernameNotFoundException e){
+        catch (BadCredentialsException e){
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Credenciales incorrectas");
         }
 
     }
 
-    // TODO: Terminar esta función de validar la información
     public ResponseEntity<?> validateInformation(BindingResult bindingResult) {
 
         // Validación del objeto recibido
@@ -82,7 +79,8 @@ public class AuthController {
             for(FieldError error : bindingResult.getFieldErrors()){
                 errors.add(error.getDefaultMessage());
             }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        return null;
     }
 }
