@@ -1,23 +1,16 @@
-package com.farmacia.mediGood.models.DTOS;
+package com.farmacia.mediGood.models.DTOS.input.autentication;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterDTO {
-
-    @NotNull(message = "El nombre no puede estar vacío")
-    @NotBlank(message = "El nombre no puede estar en blanco")
-    private String name;
-
+public class UserLoginDTO {
     @NotNull(message = "El email no puede estar vacío")
     @NotBlank(message = "El email no puede estar en blanco")
     @Email(message = "El email debe tener un formato válido")
@@ -26,7 +19,6 @@ public class UserRegisterDTO {
     @NotNull(message = "La contraseña no puede estar vacía")
     @NotBlank(message = "La contraseña no puede estar en blanco")
     private String password;
-
 
 
 }
