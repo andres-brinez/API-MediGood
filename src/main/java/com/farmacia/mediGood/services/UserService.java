@@ -16,43 +16,66 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User UpdateUser(UserInformationProfileDTO user) {
+    /**
+     * Actualiza la información de un usuario en la base de datos.
+     *
+     * @param payload La información del usuario a actualizar.
+     * @return El objeto de usuario actualizado, o null si el usuario no existe.
+     */
+    public User updateUser(UserInformationProfileDTO payload) {
+        // Busca el usuario en la base de datos por su correo electrónico
+        Optional<User> optionalUser = userRepository.findById(payload.getEmail());
 
-        Optional<User> userDB = userRepository.findById(user.getEmail());
-        if (userDB.isEmpty()) {
+        // Si el usuario no existe, devuelve null
+        if (optionalUser.isEmpty()) {
             return null;
         }
 
-        // Reccorre todos los atributos de la clase UserDb
-        for (Field fieldUserDb : userDB.get().getClass().getDeclaredFields()) {
-            fieldUserDb.setAccessible(true);
+        User userDB = optionalUser.get();
 
-            // Reccorre todos los atributos de la clase UserDto
-            for (Field fieldUser : user.getClass().getDeclaredFields()) {
-                fieldUser.setAccessible(true);
+        // Recorre todos los campos de la clase UserDB
+        for (Field userDbField : userDB.getClass().getDeclaredFields()) {
+            userDbField.setAccessible(true);
 
-                // Valida que sea el mismo atributo
-                if(fieldUserDb.getName().equals(fieldUser.getName())) {
+            // Recorre todos los campos de la clase UserDto
+            for (Field UserDtoField : payload.getClass().getDeclaredFields()) {
+                UserDtoField.setAccessible(true);
 
-                    try {
+                // Verifica si son el mismo campo
+                if(userDbField.getName().equals(UserDtoField.getName())) {
 
-                        // si el objeto no se encuentra vacio
-                        if (fieldUser.get(user) != null) {
-                            if (!fieldUser.get(user).equals(0)){
-                                fieldUserDb.set(userDB.get(), fieldUser.get(user));
-                                break;
-                            }
-                        }
-                    }
-                    catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
+                    // Válida y actualiza el objeto de usuario
+                    validateObject(userDB, payload, userDbField, UserDtoField);
                 }
             }
-
         }
 
+        // Guarda el objeto de usuario actualizado en la base de datos y lo devuelve
+        return userRepository.save(userDB);
+    }
 
-        return userRepository.save(userDB.get());
+    /**
+     * Válida y actualiza un objeto de usuario basado en los campos proporcionados.
+     *
+     * @param userDB El objeto de usuario opcional de la base de datos.
+     * @param user La información del usuario a actualizar.
+     * @param fieldUserDb El campo del objeto de usuario de la base de datos.
+     * @param fieldUser El campo de la información del usuario a actualizar.
+     */
+    private void validateObject(User userDB, UserInformationProfileDTO user, Field fieldUserDb, Field fieldUser) {
+        try {
+            // Si el campo no está vacío
+            if (fieldUser.get(user) != null) {
+                // Si el campo no es igual a 0
+                if (!fieldUser.get(user).equals(0)){
+                    // Actualiza el campo del objeto de usuario de la base de datos
+                    fieldUserDb.set(userDB, fieldUser.get(user));
+                }
+            }
+        } catch (IllegalAccessException e) {
+            // Maneja la excepción
+            e.printStackTrace();
+        }
     }
 }
+
