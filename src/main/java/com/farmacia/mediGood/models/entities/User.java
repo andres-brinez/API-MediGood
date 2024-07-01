@@ -34,6 +34,7 @@ public class User implements UserDetails {
     private String address;
     private int age;
     private int dni;
+    private boolean enabled;
 
     @Enumerated(EnumType.STRING)
     private Rol rol;
@@ -44,6 +45,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.rol = Rol.USER;
+        this.enabled = true;
     }
 
     public void passwordEncoder() {
@@ -105,6 +107,7 @@ public class User implements UserDetails {
      */
     @Override
     public boolean isCredentialsNonExpired() {
+
         return UserDetails.super.isCredentialsNonExpired();
     }
 
@@ -116,7 +119,8 @@ public class User implements UserDetails {
      */
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        //return UserDetails.super.isEnabled();
+        return enabled;
     }
 }
 
