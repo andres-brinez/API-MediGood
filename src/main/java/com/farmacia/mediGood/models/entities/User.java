@@ -48,6 +48,14 @@ public class User implements UserDetails {
         this.enabled = true;
     }
 
+
+    public User(String name,String email, String password, Rol rol) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.rol = rol;
+        this.enabled = true;
+    }
     public void passwordEncoder() {
         this.password = new BCryptPasswordEncoder().encode(this.password);
     }
