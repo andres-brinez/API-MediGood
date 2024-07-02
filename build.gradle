@@ -24,21 +24,34 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Database
 	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	//Security
 	implementation 'org.springframework.security:spring-security-core:6.3.0'
 	implementation 'org.springframework.security:spring-security-config:6.3.0'
 	implementation 'org.springframework.security:spring-security-web:6.3.0'
 	implementation 'javax.servlet:javax.servlet-api:4.0.1'
+
+	// JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+	//Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	//Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Other
+	implementation group: 'com.cloudinary', name: 'cloudinary-http44', version: '1.29.0'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 
