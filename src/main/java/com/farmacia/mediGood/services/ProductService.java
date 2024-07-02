@@ -5,7 +5,6 @@ import com.farmacia.mediGood.models.entities.Category;
 import com.farmacia.mediGood.models.entities.Product;
 import com.farmacia.mediGood.repositories.CategoryRepository;
 import com.farmacia.mediGood.repositories.ProductRepository;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,32 +15,38 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository ;
+    private final ImageService imageService;
 
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
+    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository, ImageService imageService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.imageService = imageService;
     }
 
     public Product createProduct(ProductDTO product) {
 
         Optional<Category> category = categoryRepository.findById(product.getCategoryId());
-        var imgUrl =product.getImageFile().getOriginalFilename();
-        ;
-        // subir imagen
 
-        Product productToCreate = new Product(
-                product.getId(),
-                product.getName(),
-                product.getPrice(),
-                product.getDescription(),
-                imgUrl,
-                category.get(),
-                product.isInStock(),
-                product.getQuantity()
+        try {
+            var imgUrl = imageService.uploadImage(product.getImageFile());
+            Product productToCreate = new Product(
+                    product.getId(),
+                    product.getName(),
+                    product.getPrice(),
+                    product.getDescription(),
+                    imgUrl,
+                    category.get(),
+                    product.isInStock(),
+                    product.getQuantity()
 
-        );
+            );
 
-        return productRepository.save(productToCreate);
+            return productRepository.save(productToCreate);
+        }
+        catch (Exception e) {
+            return null;
+        }
+
     }
 
     /*public Product updateProduct(Long productId, Product product) throws ChangeSetPersister.NotFoundException {
