@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ProductDTO {
+public class ProductCreateDTO {
 
     @NotNull(message = "El id no puede estar vacío")
     @Positive(message = "El id no puede ser negativo")
