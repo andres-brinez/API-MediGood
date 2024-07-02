@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -41,8 +42,8 @@ public class Product {
     private int quantity;
 
     @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date dateAdded;
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime dateAdded;
 
     public Product(Long id,
                    String name,
@@ -60,6 +61,11 @@ public class Product {
         this.category = category;
         this.inStock = inStock;
         this.quantity = quantity;
-        this.dateAdded = new Date(System.currentTimeMillis());
+
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.dateAdded = LocalDateTime.now();
     }
 }
