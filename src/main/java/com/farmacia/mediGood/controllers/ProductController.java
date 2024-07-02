@@ -1,8 +1,11 @@
 package com.farmacia.mediGood.controllers;
 
-import com.farmacia.mediGood.models.DTOS.input.product.ProductDTO;
+import com.farmacia.mediGood.models.DTOS.input.product.ProductCreateDTO;
+import com.farmacia.mediGood.models.DTOS.input.product.ProductUpdateDTO;
 import com.farmacia.mediGood.models.DTOS.shared.ErrorResponseDTO;
+import com.farmacia.mediGood.models.DTOS.shared.SuccessResponseDTO;
 import com.farmacia.mediGood.models.entities.Product;
+import com.farmacia.mediGood.models.entities.User;
 import com.farmacia.mediGood.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -25,14 +28,14 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createProduct(@Valid @ModelAttribute ProductDTO productDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> createProduct(@Valid @ModelAttribute ProductCreateDTO productCreateDTO, BindingResult bindingResult) {
 
         ResponseEntity <?> responseValidation = informationValidator.validateInformation(bindingResult);
         if (responseValidation != null) {
             return responseValidation;
         }
 
-        Product productCreated= productService.createProduct(productDTO);
+        Product productCreated= productService.createProduct(productCreateDTO);
         if (productCreated == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear el producto");
         }
@@ -61,6 +64,35 @@ public class ProductController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
+
+
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateProduct(@Valid @RequestBody ProductUpdateDTO user, BindingResult bindingResult) {
+
+        ResponseEntity<?> responseValidation = informationValidator.validateInformation(bindingResult);
+
+        if (responseValidation != null) {
+            return responseValidation;
+        }
+
+        try {
+            Product updateProduct = productService.updateProduct(user);
+
+            if (updateProduct == null) {
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponseDTO("Producto no encontrado"));          }
+
+            return ResponseEntity.ok(updateProduct);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponseDTO("Error al actualizar el usuario"));
+        }
+    }
+
+
 
 
 }

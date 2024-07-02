@@ -1,12 +1,14 @@
 package com.farmacia.mediGood.services;
 
-import com.farmacia.mediGood.models.DTOS.input.product.ProductDTO;
+import com.farmacia.mediGood.models.DTOS.input.product.ProductCreateDTO;
+import com.farmacia.mediGood.models.DTOS.input.product.ProductUpdateDTO;
 import com.farmacia.mediGood.models.entities.Category;
 import com.farmacia.mediGood.models.entities.Product;
 import com.farmacia.mediGood.repositories.CategoryRepository;
 import com.farmacia.mediGood.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +25,7 @@ public class ProductService {
         this.imageService = imageService;
     }
 
-    public Product createProduct(ProductDTO product) {
+    public Product createProduct(ProductCreateDTO product) {
 
         Optional<Category> category = categoryRepository.findById(product.getCategoryId());
 
@@ -58,18 +60,33 @@ public class ProductService {
     }
 
 
-    /*public Product updateProduct(Long productId, Product product) throws ChangeSetPersister.NotFoundException {
-        Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new ChangeSetPersister.NotFoundException());
-        existingProduct.setName(product.getName());
-        existingProduct.setPrice(product.getPrice());
-        existingProduct.setDescription(product.getDescription());
-        existingProduct.setImageUrl(product.getImageUrl());
-        existingProduct.setCategory(product.getCategory());
-        existingProduct.setInStock(product.isInStock());
-        existingProduct.setQuantity(product.getQuantity());
-        return productRepository.save(existingProduct);
-    }*/
+    // Este metodo es parecido al de update para el usuario que tiene comentarios
+    public Product updateProduct(ProductUpdateDTO payload) {
+
+        Optional<Product> optionalProduct = productRepository.findById(payload.getId());
+
+        if (optionalProduct.isEmpty()) {
+            return null;
+        }
+
+        Product productDB = optionalProduct.get();
+
+        for (Field productDbField : productDB.getClass().getDeclaredFields()) {
+            productDbField.setAccessible(true);
+
+            for (Field ProductField : payload.getClass().getDeclaredFields()) {
+                ProductField.setAccessible(true);
+
+                if(productDbField.getName().equals(ProductField.getName())) {
+
+
+                    validateObject(productDB, payload, productDbField, ProductField);
+                }
+            }
+        }
+
+        return productRepository.save(productDB);
+    }
 
     public void deleteProduct(Long productId) {
         productRepository.deleteById(productId);
@@ -79,11 +96,18 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public List<Product> getProductsInStock() {
-        return productRepository.findByInStock(true);
-    }
 
-    public List<Product> getProductsByCategory(Category category) {
-        return productRepository.findByCategory(category);
+
+    private void validateObject(Product productDB, ProductUpdateDTO producto, Field fieldProductDb, Field fieldProduct) {
+        try {
+            // Si el campo no está vacío
+            if (fieldProduct.get(producto) != null) {
+                fieldProductDb.set(productDB, fieldProduct.get(producto));
+            }
+        } catch (IllegalAccessException e) {
+            // Maneja la excepción
+            e.printStackTrace();
+        }
     }
 }
+
