@@ -1,16 +1,13 @@
 package com.farmacia.mediGood.controllers;
 
 import com.farmacia.mediGood.models.DTOS.input.product.ProductDTO;
+import com.farmacia.mediGood.models.entities.Product;
 import com.farmacia.mediGood.services.ProductService;
 import jakarta.validation.Valid;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("api/v1/products")
@@ -32,13 +29,12 @@ public class ProductController {
             return responseValidation;
         }
 
-        try {
-            productService.createProduct(productDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Producto creado con exito");
-        } catch (Exception e) {
+        Product productCreated= productService.createProduct(productDTO);
+        if (productCreated == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear el producto");
         }
-
+        return ResponseEntity.status(HttpStatus.CREATED).body(productCreated);
     }
+
 
 }
