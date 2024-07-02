@@ -44,7 +44,7 @@ public class CategoryController {
 
         try {
             Category category = categoryService.createCategory(categoryDto);
-            return ResponseEntity.ok(new SuccessResponseDTO("Category created successfully"));
+            return ResponseEntity.ok(category);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDTO("Error creating category"));
         }
