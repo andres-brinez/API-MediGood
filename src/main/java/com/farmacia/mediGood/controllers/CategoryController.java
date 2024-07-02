@@ -30,8 +30,6 @@ public class CategoryController {
 
         List<Category> categories = categoryService.getAllCategories();
 
-        categories.forEach(category -> System.out.println(category.getClass().getName()));
-
         return categoryService.getAllCategories();
     }
 
