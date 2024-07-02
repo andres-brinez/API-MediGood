@@ -49,6 +49,15 @@ public class ProductService {
 
     }
 
+    public Product getProductById(Long productId) {
+        return productRepository.findById(productId).orElse(null);
+    }
+
+    public List<Product> getProductsByName(String name) {
+        return productRepository.findByNameContainingIgnoreCase(name);
+    }
+
+
     /*public Product updateProduct(Long productId, Product product) throws ChangeSetPersister.NotFoundException {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ChangeSetPersister.NotFoundException());
