@@ -18,5 +18,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByNameContainingIgnoreCase(String name);
 
     // obtener los ultimos productos agregados
-    List<Product> findTop10ByOrderByDateAddedAsc();
+    List<Product> findTop15ByOrderByDateAddedAsc();
 }

@@ -59,6 +59,18 @@ public class ProductService {
         return productRepository.findByNameContainingIgnoreCase(name);
     }
 
+    // get all products in stock
+    public List<Product> getProductsInStock() {
+        return productRepository.findByInStock(true);
+    }
+
+    public List<Product> getTopProducts() {
+        return productRepository.findTop15ByOrderByDateAddedAsc();
+    }
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
 
     // Este metodo es parecido al de update para el usuario que tiene comentarios
     public Product updateProduct(ProductUpdateDTO payload) {
@@ -88,12 +100,16 @@ public class ProductService {
         return productRepository.save(productDB);
     }
 
-    public void deleteProduct(Long productId) {
-        productRepository.deleteById(productId);
-    }
+   // hidden product
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public Product hideProduct(Long productId) {
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        if (optionalProduct.isEmpty()) {
+            return null;
+        }
+        Product productDB = optionalProduct.get();
+        productDB.setInStock(false);
+        return productRepository.save(productDB);
     }
 
 

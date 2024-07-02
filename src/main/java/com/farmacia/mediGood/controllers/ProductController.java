@@ -65,6 +65,34 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+        if (products.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDTO("No se encontraron productos"));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(products);
+    }
+
+
+    @GetMapping("/available")
+    public ResponseEntity<?> getAvailableProducts() {
+        List<Product> products = productService.getProductsInStock();
+        if (products.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDTO("No se encontraron productos disponibles"));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(products);
+    }
+
+
+    @GetMapping("/top")
+    public ResponseEntity<?> getTopProducts() {
+        List<Product> products = productService.getTopProducts();
+        if (products.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDTO("No se encontraron productos disponibles"));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(products);
+    }
 
 
     @PutMapping("/update")
@@ -90,6 +118,15 @@ public class ProductController {
             System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponseDTO("Error al actualizar el usuario"));
         }
+    }
+
+    @PatchMapping("/hide/{id}")
+    public ResponseEntity<?> hideProduct(@PathVariable Long id) {
+        Product product = productService.hideProduct(id);
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDTO("Producto no encontrado"));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(product);
     }
 
 
