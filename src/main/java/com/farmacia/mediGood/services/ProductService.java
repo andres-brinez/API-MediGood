@@ -100,6 +100,9 @@ public class ProductService {
         return productRepository.save(productDB);
     }
 
+    public Product updateStock (Product payload){
+        return productRepository.save(payload);
+    }
    // hidden product
 
     public Product hideProduct(Long productId) {
@@ -111,8 +114,6 @@ public class ProductService {
         productDB.setInStock(false);
         return productRepository.save(productDB);
     }
-
-
 
     private void validateObject(Product productDB, ProductUpdateDTO producto, Field fieldProductDb, Field fieldProduct) {
         try {
