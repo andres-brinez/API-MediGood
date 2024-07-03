@@ -81,4 +81,25 @@ public class PurchaseService {
 
     }
 
+    public List<Purchase> historyPurcheseUser (String email) {
+
+        User user = userService.getUserByEmail(email);
+
+        if (user == null) {
+            throw new IllegalArgumentException("El usuario no existe");
+        }
+
+        return purchaseRepository.findAllByUser(user);
+    }
+
+    public List<Purchase> historyPurchese () {
+        return purchaseRepository.findAll();
+    }
+
+    public Purchase getPurcheseById(Long id ){
+
+        Purchase purchase= purchaseRepository.findById(id).orElse(null);
+        return purchase;
+    }
+
 }
