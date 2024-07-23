@@ -12,9 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("api/v1/products")
 public class ProductController {
@@ -28,18 +31,34 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createProduct(@Valid @ModelAttribute ProductCreateDTO productCreateDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> createProduct(
+                                           @RequestParam("id") long id,
+                                           @RequestParam("name") String name,
+                                           @RequestParam("price") BigDecimal price,
+                                           @RequestParam("description") String description,
+                                           @RequestParam("imageFile") MultipartFile imageFile, // Asumiendo que quieres manejar un archivo
+                                           @RequestParam("categoryId") Long categoryId,
+                                           @RequestParam("inStock") Boolean inStock,
+                                           @RequestParam("quantity") Integer quantity
+                                            ) {
 
-        ResponseEntity <?> responseValidation = informationValidator.validateInformation(bindingResult);
-        if (responseValidation != null) {
-            return responseValidation;
-        }
+        // TODO: Hacer las validaciones cuando se crea productCreateDTO, investigar como se hace
+        //ResponseEntity <?> responseValidation = informationValidator.validateInformation(bindingResult);
+        //if (responseValidation != null) {
+          //  return responseValidation;
+        //}
+
+        ProductCreateDTO productCreateDTO = new ProductCreateDTO(id, name, price, description, imageFile, categoryId, inStock, quantity);
 
         Product productCreated= productService.createProduct(productCreateDTO);
+
         if (productCreated == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear el producto");
         }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(productCreated);
+
+
     }
 
 
