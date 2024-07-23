@@ -46,6 +46,7 @@ public class ProductService {
             return productRepository.save(productToCreate);
         }
         catch (Exception e) {
+            System.out.println(e.getMessage());
             return null;
         }
 
