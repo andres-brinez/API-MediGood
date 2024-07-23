@@ -25,8 +25,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request ->
                         request
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/farmacia/**").authenticated()
+                        .requestMatchers("/api/v1/products/{id}").permitAll()
+                        .requestMatchers("/api/v1/products/name/{name}").permitAll()
+                        .requestMatchers("/api/v1/products/available").permitAll()
+                        .requestMatchers("/api/v1/products/top").permitAll()
+                        .requestMatchers("/api/v1/categories").permitAll()
+
+                                //.requestMatchers("/api/v1/farmacia/**").authenticated()
                         .anyRequest().authenticated()
+                        //.anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // politica de manejo de sesiones que se encarga de manejar las sesiones para que cada petición sea unica por lo que es Stateless que es una sesión no persistente
                 .authenticationProvider(authenticationProvider)
