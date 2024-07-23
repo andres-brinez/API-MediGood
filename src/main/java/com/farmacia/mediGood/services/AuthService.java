@@ -31,6 +31,7 @@ public class AuthService {
 
     public User registerUser(UserRegisterDTO user){
 
+
         User newUser = new User(user.getName(),user.getEmail(),user.getPassword());
         newUser.passwordEncoder();
 
