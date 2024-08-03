@@ -54,6 +54,7 @@ public class UsersServiceTest {
 
         User result = usersService.getUserByEmail(userEmail);
 
+        System.out.println(result);
         assertNotNull(result);
         assertEquals("John Doe", result.getName());
         assertEquals("john.doe@example.com", result.getEmail());
@@ -68,7 +69,7 @@ public class UsersServiceTest {
         when(userRepository.save(user)).thenReturn(user);
 
         User result = usersService.hideUser(userEmail);
-
+        System.out.println(result);
         assertNotNull(result);
         assertFalse(result.isEnabled());
     }

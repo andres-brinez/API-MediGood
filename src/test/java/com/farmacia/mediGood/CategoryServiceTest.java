@@ -36,6 +36,7 @@ public class CategoryServiceTest {
         when(categoryRepository.findAll()).thenReturn(categories);
 
         List<Category> result = categoryService.getAllCategories();
+        System.out.println(result);
 
         assertEquals(2, result.size());
         assertEquals("Category 1", result.get(0).getName());
@@ -50,6 +51,7 @@ public class CategoryServiceTest {
         when(categoryRepository.save(category)).thenReturn(category);
 
         Category result = categoryService.createCategory(categoryDto);
+        System.out.println(result);
 
         assertNotNull(result);
         assertEquals("New Category", result.getName());
@@ -64,7 +66,7 @@ public class CategoryServiceTest {
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
 
         Category result = categoryService.getCategoryById(categoryId);
-
+        System.out.println(result);
         assertNotNull(result);
         assertEquals("Test Category", result.getName());
         assertEquals(categoryId, result.getId());

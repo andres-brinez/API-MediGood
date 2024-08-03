@@ -57,6 +57,7 @@ public class AuthServiceTest {
         Mockito.when(jwtService.generateToken(user)).thenReturn("mockedToken");
 
         String result = authService.login(userLoginDTO);
+        System.out.println(result);
 
         assertNotNull(result);
         assertEquals("mockedToken", result);
