@@ -15,7 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
 @RestController()
 @RequestMapping("/api/v1/auth") // Corrección aquí
 
